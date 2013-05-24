@@ -1,0 +1,21 @@
+<? 
+$form = $this->form;
+   $form->setAttribute( 'class', 'form-horizontal signup' );
+   $form->prepare() ?>
+<?=$this->form()->openTag( $form )?>
+	<fieldset>
+		<? foreach( $this->form->getElements() as $e ) :?>
+			<? $class = count( $e->getMessages() ) ? 'error' : '' ?>
+			<div class="control-group <?=$class?>">
+				<? $class = $e->getAttribute( 'class' ) ? ' ' . $e->getAttribute( 'class' ): '' ?>
+				<label class="control-label<?=$class?>" for="<?=$e->getAttribute( 'id' )?>">
+					<?=$this->translate( $e->getOption( 'label' ), '' )?>
+				</label>
+				<div class="controls">
+					<?=$this->formInput( $e )?>
+					<?=$this->formElementErrors( $e )?>
+				</div>
+			</div>
+		<? endforeach ?>
+	</fieldset>
+<?=$this->form()->closeTag()?>

@@ -1,0 +1,25 @@
+<?=$this->doctype() ?>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <?=$this->headTitle( $this->translate( 'Jamydays – russian speaking photographers abroad' ) ) ?>
+        <?=$this->headMeta()->appendName( 'viewport', 'width=device-width, initial-scale=1.0' ) ?>
+        <?=$this->headLink()->prependStylesheet( $this->basePath() . '/css/core.css' )
+                        	->prependStylesheet( $this->basePath() . '/css/bootstrap.min.css' ) ?>
+        <?=$this->headScript()->prependFile( $this->basePath() . '/js/core.js' )
+							  ->prependFile( $this->basePath() . '/js/widgets/note.js', 'text/javascript' )
+							  ->prependFile( $this->basePath() . '/js/widgets/form.js', 'text/javascript' )
+							  ->prependFile( $this->basePath() . '/js/widgets/captcha.js', 'text/javascript' )
+							  ->prependFile( $this->basePath() . '/js/translator.js', 'text/javascript' )
+							  ->prependFile( $this->basePath() . '/js/datepicker/js/bootstrap-datepicker.js')
+							  ->prependFile( $this->basePath() . '/js/select2-3.3.1/select2.js')
+							  ->prependFile( $this->basePath() . '/js/backbone.gsmodel.js' )
+							  ->prependFile( $this->basePath() . '/js/backbone-0.9.2-dev.js' )
+							  ->prependFile( $this->basePath() . '/js/underscore-1.4.2-dev.js' )
+                              ->prependFile( $this->basePath() . '/js/bootstrap.min.js' )
+                              ->prependFile( $this->basePath() . '/js/jquery.min.js' ) ?>
+    </head>
+    <body>
+		<?=$this->content ?>
+    </body>
+</html>

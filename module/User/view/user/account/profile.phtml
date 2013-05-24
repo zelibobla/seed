@@ -1,0 +1,62 @@
+<h1><?=$this->translate( 'Personal data', '' )?></h1>
+<? $form = $this->form;
+   $form->setAttribute( 'class', 'span8 form-horizontal personal_data form' );
+   $form->setAttribute( 'action', $this->url( 'account_profile' ) );
+   $form->prepare();
+?>
+<?=$this->form()->openTag( $form )?>
+	<fieldset>
+		<? foreach( $this->form->getElements() as $e ) :?>
+			<? if( 'is_photographer' == $e->getName() ) :?>
+				<div class="control-group <?=$e->getAttribute( 'class' )?>">
+					<label for="<?=$e->getAttribute( 'id' )?>" class="control-label"></label>
+					<div class="controls">
+						<label class="checkbox me_photografer">
+							<input name="is_photographer"
+								   type="checkbox"
+								   id="is_photographer"
+								   value="1"
+								   <?=( $e->getValue() ? "checked" : "" )?> />
+							<?=$this->translate( $e->getLabel(), '' )?>
+						</label>	
+					</div>
+				</div>
+			<? elseif( 'hidden' == $e->getAttribute( 'type' ) ) :?>
+				<?=$this->formInput( $e )?>
+			<? else :?>
+				<? $class = count( $e->getMessages() ) ? 'error' : '' ?>
+				<div class="control-group <?=$class?>">
+					<? $class = $e->getAttribute( 'class' ) ? ' ' . $e->getAttribute( 'class' ): '' ?>
+					<label class="control-label<?=$class?>" for="<?=$e->getAttribute( 'id' )?>">
+						<?=$this->translate( $e->getOption( 'label' ), '' )?>
+					</label>
+					<div class="controls">
+						<?=$this->formInput( $e )?>
+						<?=$this->formElementErrors( $e )?>
+					</div>
+				</div>
+			<? endif ?>
+		<? endforeach ?>
+		<span class="wrap-btn-primary">
+			<input class="btn-primary" type="submit" value="<?=$this->translate( 'Save', '' )?>">
+		</span>
+	</fieldset>
+<?=$this->form()->closeTag()?>
+<div class="span3 profile_photo">
+	<figure>
+		<div id="progress" class="progress progress-success progress-striped">
+	        <div class="bar"></div>
+	    </div>
+		<img src="<?=$this->user->getAvatar()?>" alt="" id="profile_pic" />
+	</figure>
+	<footer>
+		<a href="#" class="btn-info fileinput-button">
+			<?=$this->translate( 'change photo', '' )?>
+			<input id="fileupload" type="file" name="files[]" />
+		</a>
+		<a href="#" class="wrapper_tool" id="delete_photo">
+			<span class="delete"></span>
+			<span class="tool_text"><?=$this->translate( 'delete photo' )?></span>
+		</a>
+	</footer>	
+</div>

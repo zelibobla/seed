@@ -1,0 +1,13 @@
+<?
+$this->headScript()->appendFile( $this->basePath() . '/js/account.js' );
+?>
+<div class="mainbody profile_page">
+	<div class="profile_page">
+		<ul class="nav nav-tabs ajax">
+	   		<li class="active"><a href="#profile_tab"><?=$this->translate( 'Profile', '' )?></a></li>
+	   	</ul>
+		<div class="tab-content">
+			<div class="tab-pane fade active in" id="profile_tab" url="<?=$this->url( 'account_profile' )?>"></div>
+		</div> 
+	</div>
+</div>

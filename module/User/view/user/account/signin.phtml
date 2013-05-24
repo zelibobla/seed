@@ -1,0 +1,28 @@
+<? $form = $this->form;
+   $form->setAttribute( 'class', 'form-horizontal signin' );
+   $form->prepare();
+?>
+<?=$this->form()->openTag( $form )?>
+	<fieldset>
+		<? if( count( $form->get( 'email' )->getMessages() ) ) $class = 'error' ?>
+		<div class="control-group <?=@$class?>">
+			<label class="control-label" for="<?=$form->get( 'email' )->getAttribute( 'id' )?>">
+				<?=$this->translate( 'email', '' )?>
+			</label>
+			<div class="controls">
+				<?=$this->formInput( $form->get( 'email' ) )?>
+				<?=$this->formElementErrors( $form->get( 'email' ) )?>
+			</div>
+		</div>
+		<? if( count( $form->get( 'password' )->getMessages() ) ) $class = 'error' ?>
+		<div class="control-group <?=@$class?>">
+			<label class="control-label" for="<?=$form->get( 'password' )->getAttribute( 'id' )?>">
+				<?=$this->translate( 'password', '' )?>
+			</label>
+			<div class="controls">
+				<?=$this->formInput( $form->get( 'password' ) )?>
+				<?=$this->formElementErrors( $form->get( 'password' ) )?>
+			</div>
+		</div>
+	</fieldset>
+<?=$this->form()->closeTag()?>
