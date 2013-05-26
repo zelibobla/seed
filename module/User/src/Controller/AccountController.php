@@ -84,8 +84,10 @@ class AccountController extends AbstractActionController{
 			$new_user->generateRandomSalt()
 					 ->setPasswordHash( $new_user->encrypt( $form->get( 'password' )->getValue() ) )
 					 ->save();
-			$new_user->pushApprovalEmail();
 			$new_user->writeToSession();
+			$new_user->pushApprovalEmail()
+					 ->save();
+			$new_user->notify( sprintf( $this->_( 'Approve your email %s please' ), $new_user->getEmail() ), 'email_approval', null, true );
 			return new JsonModel( array( 'reload' => true ) );
 		}
 	}
@@ -96,7 +98,7 @@ class AccountController extends AbstractActionController{
 	*/
 	public function logoutAction(){
 		$this->user()->removeFromSession();
-		return $this->redirect()->toRoute( 'home', array() );
+		return $this->redirect()->toRoute( 'home' );
 	}
 	
 	/**
@@ -106,9 +108,28 @@ class AccountController extends AbstractActionController{
 	public function indexAction(){
 		if( !$this->user()->isAllowed( 'account_self', 'edit' ) ){
 			$this->user()->notify( $this->_( "You can't edit your profile. Signup first" ) );
-			return $this->redirect()->toRoute( 'home', array() );
+			return $this->redirect()->toRoute( 'home' );
 		}
 		return $this->view( array() );
+	}
+	
+	/**
+	* handle email approval link clicking
+	* @return \Zend\View\Model\ViewModel object
+	*/
+	public function approveAction(){
+		if( false == ( $hash = $this->params()->fromQuery( 'hash' ) ) ||
+		 	false == ( $user = $this->getServiceLocator()->get( 'user_mapper' )->build( array( 'email_approval_hash' => $hash ) ) ) ){
+			$this->user()->notify( $this->_( 'Email approval failed' ) );
+			return $this->redirect()->toRoute( 'home' );
+		}
+		$user->writeToSession();
+		$user->notify( $this->_( 'Email approval success' ) )
+			 ->unpinNote( 'email_approval' )
+			 ->setIsEmailApproved( true )
+			 ->setEmailApprovalHash( null )
+			 ->save();
+		return $this->redirect()->toRoute( 'account' );
 	}
 
 	/**
@@ -130,6 +151,8 @@ class AccountController extends AbstractActionController{
 		/* no post data? return form */
 		if( false == ( $data = $this->params()->fromPost() ) )
 			return $this->view()->jsonForm( $form );
+		if( 0 == ( int ) $data[ 'city_id' ] )
+			$data[ 'city_id' ] = null;
 
 		/* validate provided data */
 		$form->setData( $data );
@@ -266,5 +289,4 @@ class AccountController extends AbstractActionController{
 		return new JsonModel( array( 'full_filename' => $public_filename,
 		 							 'filename' => 'temp.' . $config[ 'avatar' ][ 'extensions' ][ $type ] ) );
 	}
-
 }

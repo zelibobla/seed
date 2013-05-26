@@ -23,7 +23,16 @@ return array(
                         'controller' => 'Core\Controller\Voice',
                     ),
                 ),
-            )
+            ),
+			'cron' => array(
+				'type' => 'Segment',
+				'options' => array(
+					'route' => '/cron/:action',
+					'defaults' => array(
+						'controller' => 'Core\Controller\Cron',
+					)
+				)
+			),
         ),
     ),
     'service_manager' => array(
@@ -50,6 +59,7 @@ return array(
         'invokables' => array(
             'Core\Controller\Index' => 'Core\Controller\IndexController',
 			'Core\Controller\Voice' => 'Core\Controller\VoiceController',
+			'Core\Controller\Cron' => 'Core\Controller\CronController'
         ),
     ),
 	'controller_plugins' => array(
@@ -81,5 +91,6 @@ return array(
 	),
 	'settings' => array(
 		'admin_email' => 'admin@some.ru', 
+		'cron_secret' => 'tetr3pe21',
 	),
 );
