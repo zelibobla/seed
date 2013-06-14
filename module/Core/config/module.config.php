@@ -33,6 +33,16 @@ return array(
 					)
 				)
 			),
+			'translator' => array(
+				'type' => 'Literal',
+				'options' => array(
+					'route' => '/translator',
+					'defaults' => array(
+						'controller' => 'Core\Controller\Translator',
+						'action' => 'get'
+					)
+				)
+			),
         ),
     ),
     'service_manager' => array(
@@ -59,7 +69,8 @@ return array(
         'invokables' => array(
             'Core\Controller\Index' => 'Core\Controller\IndexController',
 			'Core\Controller\Voice' => 'Core\Controller\VoiceController',
-			'Core\Controller\Cron' => 'Core\Controller\CronController'
+			'Core\Controller\Cron' => 'Core\Controller\CronController',
+			'Core\Controller\Translator' => 'Core\Controller\TranslatorController'
         ),
     ),
 	'controller_plugins' => array(
