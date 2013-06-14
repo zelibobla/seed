@@ -16,9 +16,6 @@ class User
 	protected $active_at;
 	protected $settings;
 	protected $photo;
-	protected $is_photographer = false;
-	protected $city_id;
-	protected $portfolio_link;
 	protected $is_active = 1;
 	protected $is_email_approved = 0;
 	
@@ -329,52 +326,6 @@ class User
 		$input_filter->get( 'password' )->setRequired( false );
 		$input_filter->get( 'password_repeat' )->setRequired( false );
 		
-		$input_filter->add( $factory->createInput(
-			array( 'name' => 'is_photographer',
-			 	   'required' => false )
-		) );
-		$required = ( bool ) $input_filter->getRawValue( 'is_photographer' );
-		$input_filter->add( $factory->createInput(
-			array(
-				'name' => 'city_id',
-				'required' => $required,
-				'validators' => array(
-					array(
-						'name'    => 'Db\RecordExists',
-						'options' => array(
-							'table' => 'core_cities',
-							'adapter' => $this->getMapper()->getAdapter(),
-							'field' => 'id',
-							'messages' => array(
-								\Zend\Validator\Db\RecordExists::ERROR_NO_RECORD_FOUND => $this->_( 'No such a city' ),
-							)
-						),
-					)
-				) )
-		) );
-		$input_filter->add( $factory->createInput(
-			array(
-				'name' => 'url',
-				'required' => $required,
-				'filters' => array(
-					array( 'name' => 'StripTags' ),
-					array( 'name' => 'StringTrim' )
-				),
-				'validators' => array(
-					array(
-						'name'    => 'StringLength',
-						'options' => array(
-							'encoding' => 'UTF-8',
-							'min'      => 2,
-							'max'      => 1024,
-							'messages' => array(
-								\Zend\Validator\StringLength::TOO_SHORT => $this->_( 'String is less than %min%' ),
-								\Zend\Validator\StringLength::TOO_LONG => $this->_( 'String is longer than %max%' ),
-							)
-						),
-					)
-				) )
-		) );
 		$input_filter->add( $factory->createInput(
 			array(
 				'name' => 'phone',
