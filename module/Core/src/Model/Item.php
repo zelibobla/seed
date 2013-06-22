@@ -138,7 +138,11 @@ abstract class Item
             return $this->$property;
         }
 
-		$this->$method( $args );
+		if( method_exists( $this, $method ) )
+			$this->$method( $args );
+		else
+			throw new \Exception( "Object of class" . get_class( $this ) . " has no method '$method'" );
+
     }
 
 	/**
