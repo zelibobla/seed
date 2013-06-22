@@ -28,6 +28,18 @@ class Module{
     }
 
 	/**
+	* point what to do if database table mapper required
+	* @return array
+	*/
+	public function getServiceConfig(){
+		return array(
+			'aliases' => array( 'db' => 'Zend\Db\Adapter\Adapter' ),
+			'factories' => array( 'message_mapper' => 'Core\Mapper\Message',
+			 					  'postal' => 'Core\Model\MessagesStack' ),
+		);
+	}
+
+	/**
 	* add `src` folder to autoloader namespaces
 	* @return array
 	*/

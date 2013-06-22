@@ -31,17 +31,19 @@ class Message extends Entity{
 		$data = $this->getName();
 		$config = $this->getServiceLocator()->get( 'config' );
 		$t = $this->getServiceLocator()->get( 'translator' );
+		
+		$site_name = $config[ 'public_site' ];
 
 		$mail = new \Zend\Mail\Message();
 		$mail->setEncoding( 'UTF-8' )
 			 ->setHeaderEncoding( Zend_Mime::ENCODING_BASE64 )
-			 ->setFrom( $config[ 'settings' ][ 'admin_email' ], sprintf( $t->_( 'Robot of site Jamydays.ru' ) ) )
+			 ->setFrom( $config[ 'settings' ][ 'admin_email' ], sprintf( $t->_( "Robot of site $site_name" ) ) )
 			 ->addTo( $owner->getEmail(), $owner->__toString() )
 			 ->setSubject( $data[ 'subject' ] );
 			if( true == @$data[ 'is_html' ] )
 				$mail->setBodyHtml( @$data[ 'header' ] . $data[ 'body' ] . @$data[ 'footer' ] );
 			else
-				$mail->setBodyText( sprintf( $t->_( 'Dear %s!\n\n %s\n\nBest regards!\nJamydays.ru robot' ),
+				$mail->setBodyText( sprintf( $t->_( "Dear %s!\n\n %s\n\nBest regards!\n$site_name robot" ),
 											 $owner->__toString(),
 											 @$data[ 'header' ] . $data[ 'body' ] . @$data[ 'footer' ] ) );
 		if( isset( $data[ 'attachments' ] ) &&

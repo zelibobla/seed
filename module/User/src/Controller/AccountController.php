@@ -81,10 +81,10 @@ class AccountController extends AbstractActionController{
 				 	   'email' => $form->get( 'email' )->getValue(),
 				 	   'role' => 'user' )
 			);
-			$new_user->generateRandomSalt()
+			$id = $new_user->generateRandomSalt()
 					 ->setPasswordHash( $new_user->encrypt( $form->get( 'password' )->getValue() ) )
 					 ->save();
-			$new_user->writeToSession();
+			$new_user->setId( $id )->writeToSession();
 			$new_user->pushApprovalEmail()
 					 ->save();
 			$new_user->notify( sprintf( $this->_( 'Approve your email %s please' ), $new_user->getEmail() ), 'email_approval', null, true );

@@ -149,6 +149,15 @@ class User
 		$this->setPasswordSalt( self::generateRandomString( 4 ) );
 		return $this;
 	}
+	
+	/**
+	* generate random string of 32 symbols and put it into self::email_approval_hash field
+	* @return this
+	*/
+	public function generateEmailApprovalHash(){
+		$this->setEmailApprovalHash( self::generateRandomString( 32 ) );
+		return $this;
+	}
 
 	/**
 	* generate encrypted password and put encryption result to self::password_hash field
@@ -313,6 +322,27 @@ class User
 				)
 		) );
 		return $input_filter;
+	}
+	
+	/**
+	* put mail to approve user`s email address in messages stack
+	* @return this
+	*/
+	public function pushApprovalEmail(){
+		$this->setIsEmailApproved( false )
+			 ->generateEmailApprovalHash();
+		$translator = $this->getServiceLocator()->get( 'translator' );
+		$settings = $this->getServiceLocator()->get( 'config' );
+		if( false == ( $base = $settings[ 'settings' ][ 'public_site' ] ) )
+			throw new \Exception( "[ 'settings' ][ 'public_site' ] should be defined to generate email approval link" );
+		$link = $base . "/account/approve?hash={$this->getEmailApprovalHash()}";
+		$text = sprintf( $translator->translate( 'Approve your email please by clicking this link %s', '' ), $link );
+		$this->getServiceLocator()->get( 'postal' )->push(
+			$this,
+			$this,
+			array( 'subject' => $translator->translate( 'Email approval' ), 'body' => $text ),
+			1 );
+		return $this;
 	}
 	
 	/**

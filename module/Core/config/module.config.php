@@ -103,5 +103,6 @@ return array(
 	'settings' => array(
 		'admin_email' => 'admin@some.ru', 
 		'cron_secret' => 'tetr3pe21',
+		'public_site' => 'default.ru'
 	),
 );
