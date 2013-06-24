@@ -5,6 +5,7 @@
  *
  */
 
+
 namespace Core\Model;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -63,7 +64,7 @@ class MessagesStack implements FactoryInterface{
 										 'delay' => $delay ) );
 		$message->save();
 	}
-	
+
 	/**
 	* retrieve from stack active message by specified subject (freshness is defined by self::delay value) and type
 	* @param user – instance of \User\Model\User object (recipient of message)
@@ -76,12 +77,12 @@ class MessagesStack implements FactoryInterface{
 										'subject_id' => $subject->getId(),
 										'subject_class' => get_class( $subject ) ) );
 	}
-	
+
 	/**
 	* retrieve from stack messages with expired delay and send them
 	* @return void
 	*/
-	public function sendExpired(){
+	public function flush(){
 		if( !count( $messages = $this->_services->get( 'message_mapper' )->getExpired() ) )
 			return;
 
@@ -89,4 +90,3 @@ class MessagesStack implements FactoryInterface{
 			$message->send();
 	}
 }
-
