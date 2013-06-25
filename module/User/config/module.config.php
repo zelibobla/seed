@@ -62,6 +62,16 @@ return array(
 					)
 				)
 			),
+			'account_approve' => array(
+				'type' => 'Literal',
+				'options' => array(
+					'route'	 => '/account/approve',
+					'defaults' => array(
+						'controller' 	=> 'User\Controller\Account',
+						'action'		=> 'approve',
+					)
+				)
+			),
         ),
     ),
     'service_manager' => array(

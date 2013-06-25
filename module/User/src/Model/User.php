@@ -44,7 +44,27 @@ class User
 						   'class' => $class,
 						   'is_pinned' => $is_pinned,
 						   'owner_id' => $this->getId() ) );
-		return $note->save();	
+		$note->save();
+		return $this;
+	}
+	
+	/**
+	* shorthand to unpin note for current user
+	* @param $subject – string subject of note
+	* @return this
+	*/
+	public function unpinNote( $subject ){
+		if( false == $this->getId() )
+			throw new \Exception( "Can't unpin message from user with undefined id" );
+		if( true == ( $note = $this->getServiceLocator()->get( 'note_mapper' )->build(
+									array( 'owner_id' => $this->getId(),
+										   'is_pinned' => true,
+		 								   'subject' => $subject ) ) ) ){
+			$note->setIsPinned( false )
+				 ->setIsActive( false )
+				 ->save();
+		}
+		return $this;
 	}
 	
 	/**
