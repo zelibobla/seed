@@ -52,6 +52,21 @@ class Module{
     }
 
 	/**
+	* since we need to retrieve a serviceLocator instance inside of viewHelper
+	* @return array
+	*/
+	public function getViewHelperConfig(){
+		return array(
+			'factories' => array(
+				'isAllowed' => function( $sm ) {
+	          		$locator = $sm->getServiceLocator();
+	          		return new \User\Helper\IsAllowed( $locator );
+	        	}
+	      	)
+	    );
+	}
+
+	/**
 	* define additional services
 	* @return array
 	*/
