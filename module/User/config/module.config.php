@@ -12,6 +12,16 @@ return array(
 					)
 				)
 			),
+			'recover' => array(
+				'type' => 'Literal',
+				'options' => array(
+					'route'	 => '/recover',
+					'defaults' => array(
+						'controller' 	=> 'User\Controller\Account',
+						'action'		=> 'recover'
+					)
+				)
+			),
 			'signup' => array(
 				'type' => 'Literal',
 				'options' => array(
@@ -103,6 +113,7 @@ return array(
             'user/index/index'	=> __DIR__ . '/../view/user/index/index.phtml',
 			'signup'			=> __DIR__ . '/../view/user/account/signup.phtml',
 			'signin'			=> __DIR__ . '/../view/user/account/signin.phtml',
+			'recover'			=> __DIR__ . '/../view/user/account/recover.phtml',
 			'profile'			=> __DIR__ . '/../view/user/account/profile.phtml',
         ),
         'template_path_stack' => array(

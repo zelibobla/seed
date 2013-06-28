@@ -140,16 +140,44 @@ class User
 	}
 	
 	/**
-	* reset user password
-	* @return self;
+	* put mail to recover user`s password in messages stack
+	* @return this
+	*/
+	public function pushRecoveryEmail(){
+		$this->generateEmailApprovalHash();
+		$translator = $this->getServiceLocator()->get( 'translator' );
+		$settings = $this->getServiceLocator()->get( 'config' );
+		if( false == ( $base = $settings[ 'settings' ][ 'public_site' ] ) )
+			throw new \Exception( "[ 'settings' ][ 'public_site' ] should be defined to generate password recovery link" );
+		$link = $base . "/recover?hash={$this->getEmailApprovalHash()}";
+		$text = sprintf( $translator->translate( 'You asked for password recovery. Follow this link please: %s', '' ), $link );
+		$this->getServiceLocator()->get( 'postal' )->push(
+			$this,
+			$this,
+			array( 'subject' => $translator->translate( 'Password recovery', '' ), 'body' => $text ),
+			1 );
+		return $this;
+	}
+	
+	/**
+	* generate new password for user and send him a letter
+	* @return this
 	*/
 	public function resetPassword(){
 		$password = self::generateRandomString( 6, $with_capitals = false );
-		$this->generateRandomSalt()
-			 ->generatePasswordHash( $password )
-			 ->save();
-
-		return $this;
+		$this->generateRandomSalt();
+		$this->setPasswordHash( $this->encrypt( $password ) );
+		$translator = $this->getServiceLocator()->get( 'translator' );
+		$settings = $this->getServiceLocator()->get( 'config' );
+		if( false == ( $base = $settings[ 'settings' ][ 'public_site' ] ) )
+			throw new \Exception( "[ 'settings' ][ 'public_site' ] should be defined to generate password recovery link" );
+		$text = sprintf( $translator->translate( 'You asked for password recovery. Your new password is: %s', '' ), $password );
+		$this->getServiceLocator()->get( 'postal' )->push(
+			$this,
+			$this,
+			array( 'subject' => $translator->translate( 'Password recovery', '' ), 'body' => $text ),
+			1 );
+		return $this;		
 	}
 
 	/**
@@ -205,12 +233,48 @@ class User
 		return APPLICATION_PATH . "/../public/uploads/user";
 	}
 
-	/**
-	* 
-	*
-	*/
 	public function setInputFilter( InputFilterInterface $inputFilter ) {
 		throw new \Exception( "Not used" );
+	}
+
+	/**
+	* return input filter to validate account recovery form
+	* @return InputFilter
+	*/
+	public function getRecoveryInputFilter(){
+		$input_filter = new \Zend\InputFilter\InputFilter();
+		$factory     = new \Zend\InputFilter\Factory();
+		$input_filter->add( $factory->createInput(
+			array(
+				'name'     => 'email',
+				'required' => true,
+				'filters'  => array(
+					array( 'name' => 'StripTags' ),
+					array( 'name' => 'StringTrim' ),
+				),
+				'validators' => array(
+					array( 'name' => 'NotEmpty',
+						   'options' => array(
+								'messages' => array(
+									\Zend\Validator\NotEmpty::IS_EMPTY => $this->_( 'Field can not be empty' )
+								 )
+							)
+						),
+					array(
+						'name'    => 'StringLength',
+						'options' => array(
+							'encoding' => 'UTF-8',
+							'min'      => 5,
+							'max'      => 100,
+							'messages' => array(
+								\Zend\Validator\StringLength::TOO_SHORT => $this->_( 'String is less than %min%' ),
+								\Zend\Validator\StringLength::TOO_LONG => $this->_( 'String is longer than %max%' ),
+							)
+						),
+					),
+				),
+			) ) );
+		return $input_filter;
 	}
 
 	/**

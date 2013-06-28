@@ -75,7 +75,8 @@ class MessagesStack implements FactoryInterface{
 		return $this->_services->get( 'message_mapper' )
 						->fetchOne( array( 'owner_id' => $user->getId(),
 										'subject_id' => $subject->getId(),
-										'subject_class' => get_class( $subject ) ) );
+										'subject_class' => get_class( $subject ),
+										'is_active' => 1 ) );
 	}
 
 	/**

@@ -46,6 +46,56 @@ class AccountController extends AbstractActionController{
 	}
 
 	/**
+	* account recovery process: a) bring form; b) handle sumbited form
+	* @return mixed json array( 'header' => ..., 'body' => ... and etc ) if request is GET or POST submitted form is invalid
+	*				  or array( 'result' => true ) if submitted form is valid
+	*/
+	public function recoverAction(){
+		if( !$this->user()->isAllowed( 'account_self', 'login' ) ){
+			$this->user()->notify( $this->_( 'You are already logged into your account' ) );
+			$this->getResponse()->setStatusCode( 400 );
+			return new JsonModel( array() );
+		}
+		/* if hash specified, validate it and reset password if okay */
+		if( true == ( $hash = $this->params()->fromQuery( 'hash' ) ) ){
+			if( true == ( $user = $this->getServiceLocator()->get( 'user_mapper' )->build( array( 'email_approval_hash' => $hash ) ) ) ){
+				$user->resetPassword()
+					 ->save();
+				$this->user()->notify( $this->_( 'New password sent to your email' ) );
+				return $this->redirect()->toRoute( 'home' );
+			} else {
+				$this->user()->notify( $this->_( 'Password reset hash invalid. Operation canceled' ) )
+							 ->setEmailApprovalHash( null )
+							 ->save();
+				return $this->redirect()->toRoute( 'home' );
+			}
+		}
+		$form = new \User\Form\Recover();
+		$form->setInputFilter( $this->user()->getRecoveryInputFilter() );
+
+		/* no post data? return form to submit */
+		if( false == ( $data = $this->params()->fromPost() ) )
+			return $this->view()->jsonForm( $form );
+
+		/* validate post data */
+		$form->setData( $data );
+		if( !$form->isValid() ){
+			$this->user()->notify( $this->_( 'Invalid data provided' ) );
+			$this->getResponse()->setStatusCode( 406 );
+			return $this->view()->jsonForm( $form );
+		} elseif( false == ( $user = $this->serviceLocator->get( 'user_mapper' )
+										  ->build( array( 'email' => $form->get( 'email' )->getValue() ) ) ) ){
+			$this->user()->notify( $this->_( 'Specified email does not exist' ) );
+			$this->getResponse()->setStatusCode( 406 );
+			return $this->view()->jsonForm( $form );
+		}
+		$user->pushRecoveryEmail()
+			 ->save();
+		$this->user()->notify( $this->_( 'Check your email for a password recovery letter' ) );
+		return new JsonModel( array( 'result' => true ) );
+	}
+	
+	/**
 	* bring user signup form
 	* @return mixed json array( 'header' => ..., 'body' => ... and etc ) if request is GET or POST submitted form is invalid
 	*				  or array( 'result' => true ) if submitted form is valid

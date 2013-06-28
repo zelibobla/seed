@@ -1,0 +1,18 @@
+<? $form = $this->form;
+   $form->setAttribute( 'class', 'form-horizontal recover' );
+   $form->prepare();
+?>
+<?=$this->form()->openTag( $form )?>
+	<fieldset>
+		<? $class = count( $form->get( 'email' )->getMessages() ) ? 'error' : '' ?>
+		<div class="control-group <?=@$class?>">
+			<label class="control-label" for="<?=$form->get( 'email' )->getAttribute( 'id' )?>">
+				<?=$this->translate( 'email', '' )?>
+			</label>
+			<div class="controls">
+				<?=$this->formInput( $form->get( 'email' ) )?>
+				<?=$this->formElementErrors( $form->get( 'email' ) )?>
+			</div>
+		</div>
+	</fieldset>
+<?=$this->form()->closeTag()?>
